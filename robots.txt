@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Sitemap: https://egor12012000.github.io/sitemap.xml
+
+# Боты, которым разрешён доступ
+User-agent: Googlebot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Запрещаем доступ к служебным файлам (если будут)
+Disallow: /admin/
+Disallow: /private/

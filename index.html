@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>FantasyCraft Minecraft сервер с датапаками | Суперское оружие и структуры</title>
+    <meta name="description" content="Присоединяйтесь к серверу Minecraft с крутыми датапаками! Суперское оружие, уникальные структуры, исследования мира. Адрес: FantasyCraft.minerent.io">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: white;
+            min-height: 400vh;
+            overflow-x: hidden;
+            position: relative;
+            background: #0a192f;
+        }
+
+        /* ОСНОВНОЙ ФОН С ПЛАВНЫМИ ПЕРЕХОДАМИ */
+        .parallax-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            transition: background 3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: background;
+        }
+
+        /* СТРАНИЦА ПОДДЕРЖКИ (ШАХТА) */
+        .support-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            background: #1a1a1a;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .support-page.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .mine-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+
+        .mine-block {
+            position: absolute;
+            background: #505050;
+            border: 2px solid #404040;
+            border-top-color: #606060;
+            border-left-color: #606060;
+            animation: mineBlockPulse 4s infinite alternate;
+            box-shadow: 
+                inset 0 0 10px rgba(0, 0, 0, 0.5),
+                0 0 10px rgba(80, 80, 80, 0.3);
+        }
+
+        .stone-block { background: #808080; border-color: #696969; }
+        .coal-block { background: #333; border-color: #222; }
+        .iron-block { background: #a0a0a0; border-color: #909090; }
+        .gold-block { 
+            background: linear-gradient(45deg, #ffd700, #ffed4e); 
+            border-color: #ffcc00;
+            animation: goldGlow 2s infinite alternate;
+        }
+        .diamond-block { 
+            background: linear-gradient(45deg, #4fc3f7, #29b6f6, #81d4fa); 
+            border-color: #29b6f6;
+            animation: diamondGlow 3s infinite alternate;
+        }
+
+        @keyframes mineBlockPulse {
+            0% { opacity: 0.8; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.02); }
+        }
+
+        @keyframes goldGlow {
+            0% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+            100% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+        }
+
+        @keyframes diamondGlow {
+            0% { box-shadow: 0 0 20px rgba(79, 195, 247, 0.4); }
+            100% { box-shadow: 0 0 40px rgba(79, 195, 247, 0.8); }
+        }
+
+        /* СТРАНИЦА 2: АДСКОЕ ИЗМЕРЕНИЕ */
+        .hell-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2001;
+            background: #2c0606;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .hell-page.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .hell-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2c0606 0%, #8b0000 100%);
+            overflow: hidden;
+        }
+
+        .hell-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff4500, #ff0000);
+            box-shadow: 0 0 20px #ff0000;
+            animation: float 15s infinite linear;
+        }
+
+        .lava-flow {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(90deg, 
+                #ff0000, #ff4500, #ff8c00, #ff4500, #ff0000);
+            animation: lavaFlow 5s infinite linear;
+            box-shadow: 0 -10px 40px rgba(255, 69, 0, 0.7);
+        }
+
+        @keyframes lavaFlow {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 0; }
+        }
+
+        /* КОНТЕЙНЕРЫ */
+        .support-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 30, 30, 0.95);
+            border: 3px solid #4fc3f7;
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 800px;
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 0 50px rgba(79, 195, 247, 0.3),
+                inset 0 0 30px rgba(79, 195, 247, 0.1);
+            z-index: 1001;
+        }
+
+        .hell-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 0, 0, 0.95);
+            border: 3px solid #ff4500;
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 0 50px rgba(255, 69, 0, 0.3),
+                inset 0 0 30px rgba(255, 69, 0, 0.1);
+            z-index: 1001;
+        }
+
+        /* КНОПКИ ЗАКРЫТИЯ */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(231, 76, 60, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1002;
+        }
+
+        .close-btn:hover {
+            background: rgba(231, 76, 60, 1);
+            transform: rotate(90deg);
+        }
+
+        /* ПЛАТЕЖНЫЕ КНОПКИ */
+        .payment-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .payment-btn {
+            padding: 20px;
+            border: 2px solid;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .payment-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-btn {
+            border-color: #ffdd2d;
+            background: rgba(255, 221, 45, 0.1);
+        }
+
+        .card-btn:hover {
+            background: rgba(255, 221, 45, 0.2);
+        }
+
+        .phone-btn {
+            border-color: #4caf50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .phone-btn:hover {
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .tinkoff-logo {
+            color: #ffdd2d;
+            font-weight: bold;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .payment-details {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: center;
+            border: 1px solid;
+            display: none;
+        }
+
+        .card-details {
+            border-color: #ffdd2d;
+        }
+
+        .phone-details {
+            border-color: #4caf50;
+        }
+
+        .card-number, .phone-number {
+            font-family: 'Courier New', monospace;
+            font-size: 1.3em;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid;
+        }
+
+        .card-number {
+            color: #ffdd2d;
+            border-color: #ffdd2d;
+        }
+
+        .phone-number {
+            color: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .card-number:hover, .phone-number:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: scale(1.02);
+        }
+
+        /* ЦЕНА НА КНОПКАХ ДОНАТА */
+        .donation-price {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-top: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            animation: pricePulse 2s infinite alternate;
+        }
+
+        @keyframes pricePulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        /* СООБЩЕНИЕ О КОПИРОВАНИИ */
+        .copied-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(46, 204, 113, 0.95);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            z-index: 3000;
+            animation: fadeInOut 2s ease;
+            display: none;
+            font-size: 1.2em;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            20%, 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* НАВИГАЦИОННОЕ МЕНЮ */
+        .main-nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 30, 60, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            padding: 15px 30px;
+            z-index: 1000;
+            display: flex;
+            gap: 30px;
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: navFloat 6s infinite ease-in-out;
+        }
+
+        @keyframes navFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        .nav-item {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover {
+            background: rgba(155, 89, 182, 0.2);
+            color: #b19cd9;
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            background: rgba(155, 89, 182, 0.3);
+            color: #b19cd9;
+            border: 1px solid rgba(155, 89, 182, 0.5);
+        }
+
+        /* ОСНОВНОЙ КОНТЕЙНЕР С КОНТЕНТОМ */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            padding-top: 100px;
+        }
+
+        .container {
+            background: rgba(30, 30, 60, 0.7);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 850px;
+            width: 90%;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(155, 89, 182, 0.1);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            backdrop-filter: blur(20px);
+            text-align: center;
+            margin: 50px auto;
+            transition: all 0.8s ease;
+        }
+
+        /* ЗАГОЛОВОК */
+        .title {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            color: #b19cd9;
+            text-shadow: 
+                0 2px 10px rgba(177, 156, 217, 0.3),
+                0 4px 20px rgba(177, 156, 217, 0.2);
+            animation: titleFloat 8s infinite ease-in-out;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.02); }
+        }
+
+        /* ВСЕ КНОПКИ */
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .btn {
+            padding: 18px 35px;
+            font-size: 1.1em;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-width: 220px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent
+            );
+            transition: left 0.8s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ЦВЕТА КНОПОК */
+        .btn-support {
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.2), 
+                rgba(255, 140, 0, 0.2)
+            );
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            animation: supportBtnGlow 2s infinite alternate;
+        }
+
+        .btn-rules {
+            background: linear-gradient(135deg, 
+                rgba(46, 204, 113, 0.2), 
+                rgba(39, 174, 96, 0.2)
+            );
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-gallery {
+            background: linear-gradient(135deg, 
+                rgba(243, 156, 18, 0.2), 
+                rgba(230, 126, 34, 0.2)
+            );
+            color: #f39c12;
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-telegram {
+            background: linear-gradient(135deg, 
+                rgba(0, 136, 204, 0.2), 
+                rgba(0, 119, 181, 0.2)
+            );
+            color: #0088cc;
+            border: 1px solid rgba(0, 136, 204, 0.3);
+        }
+
+        .btn-faq {
+            background: linear-gradient(135deg, 
+                rgba(52, 152, 219, 0.2), 
+                rgba(41, 128, 185, 0.2)
+            );
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        @keyframes supportBtnGlow {
+            0% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
+            100% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.4); }
+        }
+
+        /* ОПИСАНИЕ И ТЕКСТ */
+        .welcome-message {
+            font-size: 1.3em;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            color: rgba(236, 240, 241, 0.9);
+            text-align: left;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border-left: 3px solid rgba(155, 89, 182, 0.5);
+            transition: all 0.5s ease;
+        }
+
+        .welcome-message:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-left: 3px solid rgba(155, 89, 182, 0.8);
+        }
+
+        /* СПЕЦИАЛЬНЫЕ СЕКЦИИ */
+        .section-title {
+            text-align: center;
+            color: #b19cd9;
+            font-size: 2.2em;
+            margin: 50px 0 30px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                #b19cd9, 
+                transparent
+            );
+        }
+
+        /* ФИЧИ СЕРВЕРА */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: rgba(155, 89, 182, 0.1);
+            border: 1px solid rgba(155, 89, 182, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(155, 89, 182, 0.15);
+            box-shadow: 0 15px 30px rgba(155, 89, 182, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+            color: #b19cd9;
+        }
+
+        .feature-title {
+            color: #b19cd9;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+
+        /* IP-АДРЕС БЛОК */
+        .ip-container {
+            background: rgba(155, 89, 182, 0.15);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 35px 0;
+            transition: all 0.6s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .ip-container:hover {
+            transform: translateY(-3px);
+            background: rgba(155, 89, 182, 0.2);
+            box-shadow: 0 10px 25px rgba(155, 89, 182, 0.15);
+        }
+
+        .ip-address {
+            font-size: 2em;
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            color: #81c784;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            border: 1px solid rgba(129, 199, 132, 0.3);
+            display: inline-block;
+            min-width: 300px;
+        }
+
+        .ip-address:hover {
+            background: rgba(129, 199, 132, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* ФУТЕР */
+        .footer {
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(155, 89, 182, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #b19cd9;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: rgba(155, 89, 182, 0.3);
+            transform: translateY(-3px);
+        }
+
+        /* АДАПТИВНОСТЬ */
+        @media (max-width: 768px) {
+            .main-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 10px;
+                gap: 10px;
+                width: 95%;
+            }
+            
+            .nav-item {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+            
+            .title {
+                font-size: 2.5em;
+                margin-top: 80px;
+            }
+            
+            .container {
+                padding: 25px 15px;
+                margin: 30px auto;
+            }
+            
+            .btn {
+                min-width: 100%;
+                padding: 15px 25px;
+                font-size: 1em;
+            }
+            
+            .ip-address {
+                font-size: 1.5em;
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- НАВИГАЦИОННОЕ МЕНЮ -->
+    <nav class="main-nav">
+        <a href="#home" class="nav-item active" onclick="scrollToSection('home')">
+            <span>🏠</span> Главная
+        </a>
+        <a href="#features" class="nav-item" onclick="scrollToSection('features')">
+            <span>✨</span> Особенности
+        </a>
+        <a href="#connect" class="nav-item" onclick="scrollToSection('connect')">
+            <span>🚀</span> Подключиться
+        </a>
+        <a href="#gallery" class="nav-item" onclick="scrollToSection('gallery')">
+            <span>🖼️</span> Галерея
+        </a>
+        <a href="#rules" class="nav-item" onclick="scrollToSection('rules')">
+            <span>📜</span> Правила
+        </a>
+        <a href="#faq" class="nav-item" onclick="scrollToSection('faq')">
+            <span>❓</span> FAQ
+        </a>
+    </nav>
+
+    <!-- АНИМИРОВАННЫЙ ФОН -->
+    <div class="parallax-background" id="parallaxBg"></div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <div class="main-content">
+        <!-- ГЛАВНАЯ СЕКЦИЯ -->
+        <div class="container" id="home">
+            <h1 class="title">⚔️ FantasyCraft Minecraft</h1>
+            
+            <div class="welcome-message">
+                <p style="color: #b19cd9; font-weight: 500; margin-bottom: 20px;">Здравствуйте, искатели приключений!</p>
+                <p>Добро пожаловать в <strong style="color: #b19cd9;">FantasyCraft</strong> — мир, где мечты становятся реальностью, а каждое приключение наполнено магией и тайнами.</p>
+                
+                <p style="margin: 25px 0; padding: 20px; background: rgba(177, 156, 217, 0.1); border-radius: 10px; border-left: 3px solid #b19cd9;">
+                    🌟 <em>"В самых тихих уголках мира скрываются величайшие сокровища. Иногда нужно просто замедлиться, чтобы их заметить."</em>
+                </p>
+                
+                <p>Откройте для себя волшебный мир, где:</p>
+                <ul style="margin: 15px 0 25px 20px;">
+                    <li>Каждое оружие имеет свою историю</li>
+                    <li>Каждая структура хранит древние секреты</li>
+                    <li>Каждое приключение — это новая глава вашей легенды</li>
+                </ul>
+            </div>
+
+            <!-- ВСЕ КНОПКИ (СТАТИСТИКА УДАЛЕНА) -->
+            <div class="buttons-container">
+                <button class="btn btn-support" onclick="openSupportPage()">
+                    <span>💰</span> Поддержать проект
+                </button>
+                
+                <button class="btn btn-rules" onclick="showRules()">
+                    <span>📜</span> Правила сервера
+                </button>
+                
+                <button class="btn btn-gallery" onclick="showGallery()">
+                    <span>🖼️</span> Галерея построек
+                </button>
+                
+                <button class="btn btn-telegram" onclick="showTelegram()">
+                    <span>✈️</span> Наш Telegram
+                </button>
+                
+                <button class="btn btn-faq" onclick="showFAQ()">
+                    <span>❓</span> Частые вопросы
+                </button>
+            </div>
+
+            <!-- IP-АДРЕС -->
+            <div class="ip-container" id="connect">
+                <div style="font-size: 1.2em; color: #b19cd9; margin-bottom: 15px; font-weight: 500;">
+                    🚀 Подключиться к серверу:
+                </div>
+                <div class="ip-address" id="ipAddress" onclick="copyIP()">
+                    FantasyCraft.minerent.io
+                    <span style="margin-left: 10px; opacity: 0.7;">📋</span>
+                </div>
+                <div style="margin-top: 15px; font-size: 0.9em; color: rgba(255, 255, 255, 0.6); font-style: italic;">
+                    (Нажмите, чтобы скопировать адрес)
+                </div>
+            </div>
+        </div>
+
+        <!-- СЕКЦИЯ ОСОБЕННОСТЕЙ -->
+        <div class="container" id="features">
+            <h2 class="section-title">✨ Особенности сервера</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">⚔️</span>
+                    <h3 class="feature-title">Уникальное оружие</h3>
+                    <p>Система кастомного оружия с прокачкой, зачарованиями и уникальными эффектами</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🏰</span>
+                    <h3 class="feature-title">Эпические структуры</h3>
+                    <p>Заброшенные замки, подземные лаборатории, летающие острова и древние храмы</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🐉</span>
+                    <h3 class="feature-title">Боссы и рейды</h3>
+                    <p>Еженедельные ивенты, эпические боссы и командные подземелья с уникальным лутом</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🤝</span>
+                    <h3 class="feature-title">Сообщество</h3>
+                    <p>Активный Telegram с 30+ участниками, регулярные ивенты и конкурсы</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3 class="feature-title">Производительность</h3>
+                    <p>Высокооптимизированный сервер с 99.9% аптаймом и защитой от лагов</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🛡️</span>
+                    <h3 class="feature-title">Защита</h3>
+                    <p>Антигриферская система, резервные копии мира каждые 6 часов</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- СЕКЦИЯ FAQ -->
+        <div class="container" id="faq">
+            <h2 class="section-title">❓ Частые вопросы</h2>
+            
+            <div class="welcome-message">
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #b19cd9; margin-bottom: 10px;">Как подключиться к серверу?</h3>
+                    <p>Скопируйте адрес <strong>FantasyCraft.minerent.io</strong>, вставьте в Minecraft в разделе "Сетевая игра" → "Добавить сервер".</p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #b19cd9; margin-bottom: 10px;">Какая версия Minecraft нужна?</h3>
+                    <p>Сервер работает на версии <strong>1.21.8</strong>. Поддержка Forge и Fabric с модами.</p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #b19cd9; margin-bottom: 10px;">Есть ли правила?</h3>
+                    <p>Да! Основное правило — уважение к другим игрокам. Подробнее в разделе "Правила".</p>
+                </div>
+                
+                <div>
+                    <h3 style="color: #b19cd9; margin-bottom: 10px;">Как получить помощь?</h3>
+                    <p>Присоединяйтесь к нашему Telegram-каналу, там всегда есть активная администрация.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ФУТЕР (ГОД ИЗМЕНЕН НА 2025) -->
+        <div class="container footer">
+            <div class="social-links">
+                <a href="https://t.me/FantasyCraftt" class="social-link" onclick="showTelegram()" target="_blank">
+                    <span>✈️</span>
+                </a>
+                <a href="#" class="social-link" onclick="showGallery()">
+                    <span>🖼️</span>
+                </a>
+                <a href="#" class="social-link" onclick="openSupportPage()">
+                    <span>💰</span>
+                </a>
+                <a href="#" class="social-link" onclick="showRules()">
+                    <span>📜</span>
+                </a>
+            </div>
+            
+            <p>© 2025 FantasyCraft Minecraft Universe. Все права защищены.</p>
+            <p style="margin-top: 10px; font-size: 0.9em; color: rgba(255, 255, 255, 0.5);">
+                Создано для настоящих искателей приключений и коллекционеров легендарного лута! ⚔️
+            </p>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА 1: ШАХТА (ДОНАТ) -->
+    <div class="support-page" id="supportPage">
+        <div class="mine-background" id="mineBackground"></div>
+        <button class="close-btn" onclick="closeSupportPage()">✕</button>
+        <div class="support-container">
+            <h1 style="text-align: center; color: #4fc3f7; font-size: 2.5em; margin-bottom: 30px;">🏗️ Шахта Поддержки</h1>
+            <p style="text-align: center; color: #bdc3c7; margin-bottom: 40px;">
+                Ваша поддержка помогает нам углубляться в разработку и находить новые "жилы" контента!
+            </p>
+
+            <!-- КНОПКИ ДОНАТА С ЦЕНАМИ -->
+            <div class="donation-options" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 40px 0;">
+                <div class="donation-option" onclick="selectDonationType('prefix', '40')" style="
+                    background: rgba(50, 50, 50, 0.7);
+                    border: 2px solid #4fc3f7;
+                    border-radius: 15px;
+                    padding: 25px;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                ">
+                    <span style="font-size: 40px; margin-bottom: 10px; display: block;">👑</span>
+                    <h3 style="color: #4fc3f7; margin-bottom: 10px;">Префикс</h3>
+                    <p style="color: #95a5a6; font-size: 0.9em;">Уникальный префикс в игре</p>
+                    <div class="donation-price">40 ₽</div>
+                </div>
+
+                <div class="donation-option" onclick="selectDonationType('suffix', '40')" style="
+                    background: rgba(50, 50, 50, 0.7);
+                    border: 2px solid #4fc3f7;
+                    border-radius: 15px;
+                    padding: 25px;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                ">
+                    <span style="font-size: 40px; margin-bottom: 10px; display: block;">🏆</span>
+                    <h3 style="color: #4fc3f7; margin-bottom: 10px;">Суффикс</h3>
+                    <p style="color: #95a5a6; font-size: 0.9em;">Специальный суффикс</p>
+                    <div class="donation-price">40 ₽</div>
+                </div>
+
+                <div class="donation-option" onclick="selectDonationType('unban', '299')" style="
+                    background: rgba(50, 50, 50, 0.7);
+                    border: 2px solid #ff4500;
+                    border-radius: 15px;
+                    padding: 25px;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                ">
+                    <span style="font-size: 40px; margin-bottom: 10px; display: block;">🔓</span>
+                    <h3 style="color: #ff4500; margin-bottom: 10px;">Разбан</h3>
+                    <p style="color: #95a5a6; font-size: 0.9em;">Снятие блокировки с аккаунта</p>
+                    <div class="donation-price" style="background: rgba(255, 69, 0, 0.2); color: #ff4500; border-color: rgba(255, 69, 0, 0.3);">299 ₽</div>
+                </div>
+
+                <div class="donation-option" onclick="selectDonationType('support')" style="
+                    background: rgba(50, 50, 50, 0.7);
+                    border: 2px solid #4fc3f7;
+                    border-radius: 15px;
+                    padding: 25px;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                ">
+                    <span style="font-size: 40px; margin-bottom: 10px; display: block;">💎</span>
+                    <h3 style="color: #4fc3f7; margin-bottom: 10px;">Поддержка</h3>
+                    <p style="color: #95a5a6; font-size: 0.9em;">Любая сумма</p>
+                    <div class="donation-price">От 1 ₽</div>
+                </div>
+            </div>
+
+            <!-- БОНУСЫ -->
+            <div style="background: rgba(46, 204, 113, 0.1); border: 2px solid #2ecc71; border-radius: 15px; padding: 20px; margin: 30px 0;">
+                <h3 style="color: #2ecc71; text-align: center; margin-bottom: 20px;">🎁 Что вы получаете:</h3>
+                
+                <div style="display: flex; align-items: center; margin: 15px 0; color: #ecf0f1;">
+                    <span style="font-size: 24px; margin-right: 15px; color: #2ecc71;">⭐</span>
+                    <span>Легендарный префикс в игре и Telegram</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin: 15px 0; color: #ecf0f1;">
+                    <span style="font-size: 24px; margin-right: 15px; color: #2ecc71;">⚔️</span>
+                    <span>Эксклюзивное оружие "Покровитель"</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin: 15px 0; color: #ecf0f1;">
+                    <span style="font-size: 24px; margin-right: 15px; color: #2ecc71;">💎</span>
+                    <span>Доступ к закрытой ветке разработки</span>
+                </div>
+            </div>
+
+            <!-- КОНТАКТЫ (ИЗМЕНЕНО НА TELEGRAM) -->
+            <div style="text-align: center; margin-top: 30px; padding: 20px; background: rgba(79, 195, 247, 0.1); border-radius: 10px;">
+                <p style="color: #4fc3f7; margin-bottom: 10px;">📞 Свяжитесь с нами:</p>
+                <p style="color: #ecf0f1;">Telegram: <a href="https://t.me/FantasyCraftt" style="color: #0088cc; text-decoration: none;"><strong>@FantasyCraftt</strong></a></p>
+                <p style="color: #ecf0f1; margin-top: 5px;">После оплаты пришлите чек в Telegram для активации бонусов</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА 2: АДСКОЕ ИЗМЕРЕНИЕ -->
+    <div class="hell-page" id="hellPage">
+        <div class="hell-background" id="hellBackground"></div>
+        <button class="close-btn" onclick="closeHellPage()">✕</button>
+        <div class="hell-container">
+            <h1 style="text-align: center; color: #ff4500; font-size: 2.5em; margin-bottom: 30px;" id="hellTitle">🔥 Адский Перевод</h1>
+            <p style="text-align: center; color: #ffcccb; margin-bottom: 30px;" id="hellDescription">
+                <!-- Сюда будет подставлено описание выбранного доната -->
+            </p>
+
+            <!-- КНОПКИ ВЫБОРА СПОСОБА ОПЛАТЫ -->
+            <div class="payment-buttons">
+                <button class="payment-btn card-btn" onclick="showCardDetails()">
+                    <div class="tinkoff-logo">
+                        <span style="color: #ffdd2d; font-size: 1.5em;">T</span>
+                        <span>инькофф</span>
+                    </div>
+                    <span style="font-size: 0.9em; color: #ffdd2d;">Перевод по карте</span>
+                </button>
+
+                <button class="payment-btn phone-btn" onclick="showPhoneDetails()">
+                    <span style="font-size: 1.5em;">📱</span>
+                    <span style="font-size: 0.9em; color: #4caf50;">Перевод по номеру</span>
+                </button>
+            </div>
+
+            <!-- ДЕТАЛИ КАРТЫ -->
+            <div id="cardDetails" class="payment-details card-details">
+                <h3 style="color: #ffdd2d; margin-bottom: 20px;">💳 Перевод на карту Тинькофф</h3>
+                <p style="color: #ffcccb; margin-bottom: 15px;">Скопируйте номер карты:</p>
+                
+                <div class="card-number" onclick="copyToClipboard('2200700504865741')">
+                    2200 7005 0486 5741
+                </div>
+                
+                <div style="margin-top: 15px; color: #ffcccb; font-size: 0.9em;">
+                    <p>Банк: <strong>Тинькофф</strong></p>
+                    <p>Получатель: <strong>FantasyCraft Project</strong></p>
+                    <p style="color: #ffdd2d; font-size: 1.1em; margin-top: 10px;">
+                        <strong>Сумма к оплате: <span id="cardAmount">40</span> ₽</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- ДЕТАЛИ ТЕЛЕФОНА -->
+            <div id="phoneDetails" class="payment-details phone-details">
+                <h3 style="color: #4caf50; margin-bottom: 20px;">📱 Перевод по номеру телефона</h3>
+                <p style="color: #ffcccb; margin-bottom: 15px;">Скопируйте номер:</p>
+                
+                <div class="phone-number" onclick="copyToClipboard('89299502470')">
+                    +7 (929) 950-24-70
+                </div>
+                
+                <div style="margin-top: 15px; color: #ffcccb; font-size: 0.9em;">
+                    <p>Банк: <strong>Тинькофф</strong></p>
+                    <p>Получатель: <strong>FantasyCraft Project</strong></p>
+                    <p style="color: #4caf50; font-size: 1.1em; margin-top: 10px;">
+                        <strong>Сумма к оплате: <span id="phoneAmount">40</span> ₽</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- ИНСТРУКЦИЯ (ИЗМЕНЕНО НА TELEGRAM) -->
+            <div style="margin-top: 25px; padding: 15px; background: rgba(255, 69, 0, 0.1); border-radius: 10px; border: 1px solid #ff4500;">
+                <p style="color: #ffcccb; font-size: 0.9em; text-align: center;">
+                    ⚠️ После перевода пришлите скриншот чека в Telegram: <a href="https://t.me/FantasyCraftt" style="color: #0088cc;"><strong>@FantasyCraftt</strong></a><br>
+                    <span style="color: #ffdd2d;">В комментарии укажите: "<span id="donationComment">Префикс</span>"</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- СООБЩЕНИЕ О КОПИРОВАНИИ -->
+    <div class="copied-message" id="copiedMessage">
+        Скопировано в буфер обмена! 📋
+    </div>
+
+    <script>
+        // ПЕРЕМЕННЫЕ ДЛЯ ДОНАТА
+        let selectedDonationType = '';
+        let selectedDonationPrice = '40';
+        let selectedDonationName = 'Префикс';
+
+        // ФУНКЦИИ ДЛЯ СТРАНИЦЫ ПОДДЕРЖКИ
+        function openSupportPage() {
+            console.log('Открываем страницу поддержки');
+            const supportPage = document.getElementById('supportPage');
+            supportPage.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Создаем фон шахты
+            createMineBackground();
+        }
+
+        function closeSupportPage() {
+            const supportPage = document.getElementById('supportPage');
+            supportPage.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // СОЗДАНИЕ ФОНА ШАХТЫ
+        function createMineBackground() {
+            const mineBg = document.getElementById('mineBackground');
+            mineBg.innerHTML = '';
+            
+            const blockSize = 60;
+            const cols = Math.ceil(window.innerWidth / blockSize);
+            const rows = Math.ceil(window.innerHeight / blockSize);
+            
+            const blockTypes = [
+                { class: 'stone-block', chance: 0.5 },
+                { class: 'coal-block', chance: 0.2 },
+                { class: 'iron-block', chance: 0.15 },
+                { class: 'gold-block', chance: 0.1 },
+                { class: 'diamond-block', chance: 0.05 }
+            ];
+            
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const rand = Math.random();
+                    let cumulativeChance = 0;
+                    let blockType = blockTypes[0];
+                    
+                    for (const type of blockTypes) {
+                        cumulativeChance += type.chance;
+                        if (rand <= cumulativeChance) {
+                            blockType = type;
+                            break;
+                        }
+                    }
+                    
+                    const block = document.createElement('div');
+                    block.className = `mine-block ${blockType.class}`;
+                    block.style.width = `${blockSize}px`;
+                    block.style.height = `${blockSize}px`;
+                    block.style.left = `${col * blockSize}px`;
+                    block.style.top = `${row * blockSize}px`;
+                    block.style.animationDelay = `${Math.random() * 4}s`;
+                    
+                    mineBg.appendChild(block);
+                }
+            }
+        }
+
+        // ВЫБОР ТИПА ДОНАТА
+        function selectDonationType(type, price = '40') {
+            selectedDonationType = type;
+            selectedDonationPrice = price;
+            
+            // Определяем название доната для отображения
+            if (type === 'prefix') {
+                selectedDonationName = 'Префикс';
+            } else if (type === 'suffix') {
+                selectedDonationName = 'Суффикс';
+            } else if (type === 'unban') {
+                selectedDonationName = 'Разбан';
+            } else if (type === 'support') {
+                selectedDonationName = 'Поддержка проекта';
+                selectedDonationPrice = 'любая';
+            }
+            
+            closeSupportPage();
+            setTimeout(() => {
+                openHellPage();
+            }, 300);
+        }
+
+        // ФУНКЦИИ ДЛЯ АДСКОЙ СТРАНИЦЫ
+        function openHellPage() {
+            const hellPage = document.getElementById('hellPage');
+            hellPage.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Обновляем текст на странице
+            updateHellPageContent();
+            
+            // Создаем фон ада
+            createHellBackground();
+            
+            // Скрываем все детали оплаты
+            document.getElementById('cardDetails').style.display = 'none';
+            document.getElementById('phoneDetails').style.display = 'none';
+        }
+
+        function closeHellPage() {
+            const hellPage = document.getElementById('hellPage');
+            hellPage.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // ОБНОВЛЕНИЕ КОНТЕНТА АДСКОЙ СТРАНИЦЫ
+        function updateHellPageContent() {
+            const title = document.getElementById('hellTitle');
+            const description = document.getElementById('hellDescription');
+            const cardAmount = document.getElementById('cardAmount');
+            const phoneAmount = document.getElementById('phoneAmount');
+            const donationComment = document.getElementById('donationComment');
+            
+            if (selectedDonationType === 'support') {
+                title.textContent = '🔥 Поддержка Проекта';
+                description.innerHTML = `Поддержите проект любой суммой!<br><span style="color: #ffdd2d; font-size: 1.2em;">Вы выбрали: ${selectedDonationName}</span>`;
+                cardAmount.textContent = 'любая';
+                phoneAmount.textContent = 'любая';
+            } else {
+                title.textContent = `🔥 Оплата: ${selectedDonationName}`;
+                description.innerHTML = `Оплатите ${selectedDonationPrice} ₽ для получения ${selectedDonationName.toLowerCase()}<br><span style="color: #ffdd2d; font-size: 1.2em;">Сумма: ${selectedDonationPrice} ₽</span>`;
+                cardAmount.textContent = selectedDonationPrice;
+                phoneAmount.textContent = selectedDonationPrice;
+            }
+            
+            donationComment.textContent = selectedDonationName;
+        }
+
+        // СОЗДАНИЕ ФОНА АДА
+        function createHellBackground() {
+            const hellBg = document.getElementById('hellBackground');
+            hellBg.innerHTML = '';
+            
+            // Создаем частицы огня
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'hell-particle';
+                particle.style.width = `${Math.random() * 20 + 5}px`;
+                particle.style.height = particle.style.width;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particle.style.opacity = Math.random() * 0.5 + 0.5;
+                
+                hellBg.appendChild(particle);
+            }
+            
+            // Добавляем поток лавы
+            const lava = document.createElement('div');
+            lava.className = 'lava-flow';
+            hellBg.appendChild(lava);
+        }
+
+        // ПОКАЗ ДЕТАЛЕЙ ОПЛАТЫ
+        function showCardDetails() {
+            document.getElementById('phoneDetails').style.display = 'none';
+            const cardDetails = document.getElementById('cardDetails');
+            cardDetails.style.display = 'block';
+        }
+
+        function showPhoneDetails() {
+            document.getElementById('cardDetails').style.display = 'none';
+            const phoneDetails = document.getElementById('phoneDetails');
+            phoneDetails.style.display = 'block';
+        }
+
+        // КОПИРОВАНИЕ В БУФЕР ОБМЕНА
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopiedMessage();
+            });
+        }
+
+        function showCopiedMessage() {
+            const message = document.getElementById('copiedMessage');
+            message.style.display = 'block';
+            
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
+        }
+
+        // ЗАКРЫТИЕ ПО ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSupportPage();
+                closeHellPage();
+            }
+        });
+
+        // ЗАКРЫТИЕ ПО КЛИКУ ВНЕ КОНТЕЙНЕРА
+        document.getElementById('supportPage').addEventListener('click', (e) => {
+            if (e.target.id === 'supportPage') closeSupportPage();
+        });
+
+        document.getElementById('hellPage').addEventListener('click', (e) => {
+            if (e.target.id === 'hellPage') closeHellPage();
+        });
+
+        // ОСТАЛЬНЫЕ ФУНКЦИИ (С ИЗМЕНЕНИЯМИ ДЛЯ TELEGRAM)
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+                
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                event.target.classList.add('active');
+            }
+        }
+
+        function copyIP() {
+            const ip = 'FantasyCraft.minerent.io';
+            const ipElement = document.getElementById('ipAddress');
+            
+            navigator.clipboard.writeText(ip).then(() => {
+                const original = ipElement.innerHTML;
+                ipElement.innerHTML = 'Скопировано! ✅';
+                ipElement.style.background = 'rgba(76, 175, 80, 0.2)';
+                ipElement.style.color = '#4caf50';
+                
+                setTimeout(() => {
+                    ipElement.innerHTML = original;
+                    ipElement.style.background = '';
+                    ipElement.style.color = '';
+                }, 2000);
+            });
+        }
+
+        function showRules() {
+            alert(`📜 ПРАВИЛА FANTASYCRAFT 📜
+
+1. 🏡 Уважайте чужие постройки и территорию
+2. 💬 Общайтесь уважительно, без оскорблений
+3. ⚔️ PvP только по взаимному согласию
+4. 🚫 Запрещены читы и использование багов
+5. 🌍 Не загрязняйте мир мусором
+6. 🤝 Помогайте новым игрокам
+7. 🛡️ Администрация всегда готова помочь
+
+Полные правила в нашем Telegram!`);
+        }
+
+        function showGallery() {
+            alert(`🖼️ ГАЛЕРЕЯ ПОСТРОЕК
+
+Лучшие постройки нашего сообщества в Telegram:
+🔗 https://t.me/FantasyCraftt
+
+• Там вы найдёте фото и видео построек
+• Можете поделиться своими творениями
+• Участвуйте в конкурсах на лучшую постройку
+
+Присылайте свои постройки в Telegram!`);
+        }
+
+        function showTelegram() {
+            // Открываем Telegram в новой вкладке
+            window.open('https://t.me/FantasyCraftt', '_blank');
+        }
+
+        function showFAQ() {
+            alert(`❓ ЧАСТЫЕ ВОПРОСЫ
+
+Q: Как подключиться?
+A: FantasyCraft.minerent.io в версии 1.21.8 (Forge/Fabric)
+
+Q: Есть ли вайтлист?
+A: Нет, сервер открыт для всех
+
+Q: Как получить помощь?
+A: Пишите в чат игры или Telegram
+
+Q: Есть ли донат?
+A: Да, для поддержки проекта (не pay-to-win)
+
+Q: Где сообщество?
+A: В Telegram: https://t.me/FantasyCraftt (30+ участников)`);
+        }
+
+        // ИНИЦИАЛИЗАЦИЯ
+        window.onload = function() {
+            console.log('✨ FantasyCraft загружен со всеми функциями!');
+        };
+    </script>
+</body>
+</html>
